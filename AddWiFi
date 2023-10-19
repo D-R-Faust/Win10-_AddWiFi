@@ -1,0 +1,48 @@
+# Define the WiFi profile parameters
+# NOTE: It may be a better idea to not hard code your password here, but instead prompt for your own input.
+
+$WiFiProfileName = "Generic Name Here"
+
+$WiFiSSID = "Your SSID Here"
+
+$WiFiKey = "Your Password Here"
+
+ 
+
+# Check if the WiFi profile already exists
+
+$existingProfile = Get-NetConnectionProfile | Where-Object {$_.Name -eq $WiFiProfileName}
+
+ 
+
+if ($existingProfile -eq $null) {
+
+    # Create a WiFi profile
+
+    Add-WifiProfile -SSID $WiFiSSID -KeyMaterial $WiFiKey -ProfileName $WiFiProfileName -AutoConnectOnStart $true
+
+}
+
+ 
+
+# Connect to the WiFi network
+
+Connect-Wifi -Name $WiFiProfileName
+
+ 
+
+# Check if the connection was successful
+
+$connectedProfile = Get-NetConnectionProfile | Where-Object {$_.Name -eq $WiFiProfileName}
+
+ 
+
+if ($connectedProfile -ne $null -and $connectedProfile.ConnectionMode -eq "Connected") {
+
+    Write-Host "Connected to WiFi network: $WiFiSSID"
+
+} else {
+
+    Write-Host "Failed to connect to WiFi network: $WiFiSSID"
+
+}
